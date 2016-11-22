@@ -5,6 +5,7 @@ import com.typesafe.config.ConfigFactory
 import models.Temperature
 import models.dao.TemperatureDao
 import org.joda.time.DateTime
+import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -18,16 +19,22 @@ import scala.concurrent.duration.Duration
 class TemperatureMongoDao @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends TemperatureDao {
 
   private val connectionTimeout = Duration.create(ConfigFactory.load().getString("mongodb.connectionTimeout"))
-  val collection = Await.result(reactiveMongoApi.database, connectionTimeout).collection[JSONCollection]("temperatures")
+  lazy val collection = Await.result(reactiveMongoApi.database, connectionTimeout).collection[JSONCollection]("sensors")
 
   implicit val temperatureFormat = Json.format[Temperature]
 
-  override def add(temperature: Temperature): String = {
-    val document = temperatureToDocument(temperature)
-    val future = collection.insert(document).map {
-      _ => document.getAs[BSONObjectID]("_id").get.stringify
+  override def add(temperature: Temperature): Boolean = {
+    val selector = BSONDocument("sensorId" -> temperature.sensorId)
+    val modifier = BSONDocument("temperatures" -> temperatureToDocument(temperature))
+    val future = collection.update(selector, BSONDocument("$push" -> modifier))
+
+    Await.result(future, connectionTimeout) match {
+      case res if res.nModified == 1 => true
+      case _ =>
+        val message = "There is no sensor \"" + temperature.sensorId + "\""
+        Logger.error(message)
+        throw new Exception(message)
     }
-    Await.result(future, connectionTimeout)
   }
 
   override def findAll: List[Temperature] = {
@@ -37,7 +44,6 @@ class TemperatureMongoDao @Inject()(val reactiveMongoApi: ReactiveMongoApi) exte
   }
 
   private def temperatureToDocument(temperature: Temperature): BSONDocument = BSONDocument(
-    "_id" -> BSONObjectID.generate(),
     "date" -> temperature.date.getOrElse(DateTime.now).getMillis,
     "value" -> temperature.value
   )
