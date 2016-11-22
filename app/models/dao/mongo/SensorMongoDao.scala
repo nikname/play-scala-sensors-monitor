@@ -25,18 +25,23 @@ class SensorMongoDao @Inject()(reactiveMongoApi: ReactiveMongoApi) extends Senso
   override def add(sensor: Sensor): String = {
     val document = sensorToDocument(sensor)
 
-    val future = findSensor(sensor.name).flatMap {
+    val future = findSensor(sensor.sensorId).flatMap {
       case None =>
         collection.insert(document).map {
           _ => document.getAs[BSONObjectID]("_id").get.stringify
         }
       case Some(s) =>
-        val message = "Sensor \"" + s.name + "\" already exists"
+        val message = "Sensor \"" + s.sensorId + "\" already exists"
         Logger.error(message)
         throw new Exception(message)
     }
 
     Await.result(future, connectionTimeout)
+  }
+
+  override def find(id: String): Option[Sensor] = {
+    val futureSensor = findSensor(id)
+    Await.result(futureSensor, connectionTimeout)
   }
 
   override def findAll: List[Sensor] = {
@@ -45,12 +50,13 @@ class SensorMongoDao @Inject()(reactiveMongoApi: ReactiveMongoApi) extends Senso
     Await.result(futureList, connectionTimeout)
   }
 
-  private def findSensor(name: String) = this.collection
-    .find(BSONDocument("name" -> name))
+  private def findSensor(id: String) = this.collection
+    .find(BSONDocument("sensorId" -> id))
     .one[Sensor]
 
   private def sensorToDocument(sensor: Sensor): BSONDocument = BSONDocument(
     "_id" -> BSONObjectID.generate(),
+    "sensorId" -> sensor.sensorId,
     "name" -> sensor.name,
     "highTemperature" -> sensor.highTemperature,
     "criticalTemperature" -> sensor.criticalTemperature

@@ -15,7 +15,9 @@ class SensorController @Inject()(sensorDao: SensorDao) extends Controller {
     }
   }
 
-  def find(id: String) = TODO
+  def find(id: String) = Action { request =>
+    Ok(Json.toJson(sensorDao.find(id)))
+  }
 
   def findAll = Action { request =>
     Ok(Json.toJson(sensorDao.findAll))

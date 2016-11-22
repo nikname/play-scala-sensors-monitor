@@ -6,5 +6,7 @@ trait SensorDao {
 
   def add(sensor: Sensor): String
 
+  def find(id: String): Option[Sensor]
+
   def findAll: List[Sensor]
 }
