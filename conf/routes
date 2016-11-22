@@ -5,6 +5,12 @@
 # Home page
 GET     /                           controllers.Application.index
 
+# Sensor
+POST    /sensors/add                @controllers.SensorController.add
+GET     /sensors                    @controllers.SensorController.findAll
+GET     /sensors/:id                @controllers.SensorController.find(id: String)
+DELETE  /sensors/:id                @controllers.SensorController.remove(id: String)
+
 # Temperature
 POST    /temperatures/add           @controllers.TemperatureController.add
 GET     /temperatures               @controllers.TemperatureController.findAll
