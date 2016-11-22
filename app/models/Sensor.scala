@@ -4,9 +4,9 @@ import play.api.libs.json.Json
 
 case class Sensor(id: Option[String],
                   name: String,
-                  temperatures: List[Temperature],
+                  temperatures: Option[List[Temperature]],
                   highTemperature: Option[Int],
-                  criticTemperature: Option[Int])
+                  criticalTemperature: Option[Int])
 
 object Sensor {
 
