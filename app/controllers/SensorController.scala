@@ -23,5 +23,7 @@ class SensorController @Inject()(sensorDao: SensorDao) extends Controller {
     Ok(Json.toJson(sensorDao.findAll))
   }
 
-  def remove(id: String) = TODO
+  def remove(id: String) = Action { request =>
+    Ok(Json.toJson(sensorDao.remove(id)))
+  }
 }

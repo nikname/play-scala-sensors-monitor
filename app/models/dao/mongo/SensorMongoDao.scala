@@ -50,6 +50,23 @@ class SensorMongoDao @Inject()(reactiveMongoApi: ReactiveMongoApi) extends Senso
     Await.result(futureList, connectionTimeout)
   }
 
+  override def remove(id: String): Boolean = {
+    val selector = BSONDocument("sensorId" -> id)
+
+    val future = findSensor(id).flatMap {
+      case Some(s) =>
+        collection.remove(selector).map {
+          _ => true
+        }
+      case None =>
+        val message = "Sensor \"" + id + "\" does not exists"
+        Logger.error(message)
+        throw new Exception(message)
+    }
+
+    Await.result(future, connectionTimeout)
+  }
+
   private def findSensor(id: String) = this.collection
     .find(BSONDocument("sensorId" -> id))
     .one[Sensor]

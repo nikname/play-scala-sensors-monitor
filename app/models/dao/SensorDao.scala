@@ -9,4 +9,6 @@ trait SensorDao {
   def find(id: String): Option[Sensor]
 
   def findAll: List[Sensor]
+
+  def remove(id: String): Boolean
 }
