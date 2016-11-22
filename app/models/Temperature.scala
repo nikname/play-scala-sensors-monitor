@@ -4,7 +4,6 @@ import org.joda.time.DateTime
 import play.api.libs.json.Json
 
 case class Temperature(id: Option[String],
-                       sensorId: String,
                        date: Option[DateTime],
                        value: Int)
 

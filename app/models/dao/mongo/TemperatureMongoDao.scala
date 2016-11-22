@@ -38,7 +38,6 @@ class TemperatureMongoDao @Inject()(val reactiveMongoApi: ReactiveMongoApi) exte
 
   private def temperatureToDocument(temperature: Temperature): BSONDocument = BSONDocument(
     "_id" -> BSONObjectID.generate(),
-    "sensorId" -> temperature.sensorId,
     "date" -> DateTime.now.getMillis,
     "value" -> temperature.value
   )
