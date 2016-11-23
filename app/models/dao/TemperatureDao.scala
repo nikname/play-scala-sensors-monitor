@@ -6,5 +6,5 @@ trait TemperatureDao {
 
   def add(temperature: Temperature): Boolean
 
-  def findAll: List[Temperature]
+  def findAll(sensorId: String): List[Temperature]
 }

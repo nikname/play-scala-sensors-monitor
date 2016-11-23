@@ -17,8 +17,8 @@ class TemperatureController @Inject()(temperatureDao: TemperatureDao) extends Co
 
   def find(id: String) = TODO
 
-  def findAll = Action { request =>
-    Ok(Json.toJson(temperatureDao.findAll))
+  def findAll(sensorId: String) = Action { request =>
+    Ok(Json.toJson(temperatureDao.findAll(sensorId)))
   }
 
   def remove(id: String) = TODO
