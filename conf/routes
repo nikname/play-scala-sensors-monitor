@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET     /                                   controllers.Application.index
+GET     /                               controllers.Application.index
 
 # Sensor
 POST    /sensors/add                    @controllers.SensorController.add
@@ -13,3 +13,4 @@ DELETE  /sensors/:id                    @controllers.SensorController.remove(id:
 
 # Temperature
 POST    /temperatures/add               @controllers.TemperatureController.add
+GET     /temperatures/:sensorId         @controllers.TemperatureController.findAll(sensorId: String)
