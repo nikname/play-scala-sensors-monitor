@@ -1,6 +1,7 @@
 dependencies = [
   'ngRoute',
   'myApp.routeConfig',
+  'myApp.controllers',
   'myApp.services'
 ]
 
@@ -22,4 +23,5 @@ angular.module('myApp.routeConfig', ['ngRoute'])
       })
   ])
 
+@controllersModule = angular.module('myApp.controllers', [])
 @servicesModule = angular.module('myApp.services', [])
