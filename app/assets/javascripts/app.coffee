@@ -12,6 +12,7 @@ angular.module('myApp.routeConfig', ['ngRoute'])
     '$routeProvider',
     ($routeProvider) ->
       $routeProvider
+        .when('/', { templateUrl: '/assets/partials/view.html' })
         .otherwise({redirectTo: '/'})
   ])
   .config([
