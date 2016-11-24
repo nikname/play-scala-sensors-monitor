@@ -1,6 +1,11 @@
 <div ng-controller="SensorsCtrl as sc">
     <h2>Sensors</h2>
-    <ul ng-repeat="sensor in sc.sensors">
-        <li>{{sensor.sensorId}}</li>
-    </ul>
+    <div id="sensors">
+        <button ng-repeat="sensor in sc.sensors"
+                ng-click="sc.listTemperatures(sensor)"
+        >{{sensor.sensorId}}</button>
+    </div>
+    <div id="chart">
+        {{sc.temperatures}}
+    </div>
 </div>
