@@ -19,30 +19,35 @@ class SensorsCtrl
       )
 
   listTemperatures: (@sensor) ->
-    id = @sensor.sensorId
     dates = []
     values = []
-    angular.forEach(@sensor.temperatures,
-      (temperature) ->
-        tmpDate = new Date(temperature.date);
-        tmpDate = tmpDate.getDate() + '/' + (tmpDate.getMonth() + 1) + '/' + tmpDate.getFullYear();
-        dates.push(tmpDate)
-        values.push(temperature.value)
-    )
 
-    @$log.debug "showing temperatures of #{id}"
+    @SensorsService.getTemperatures(@sensor.sensorId)
+      .then(
+        (data) =>
+          @$log.debug "Promise returned #{data.length} Temperatures"
+          angular.forEach(data.slice(-20),
+            (temperature) ->
+              tmpDate = new Date(temperature.date);
+              tmpDate = tmpDate.getDate() + '/' + (tmpDate.getMonth() + 1) + '/' + tmpDate.getFullYear();
+              dates.push(tmpDate)
+              values.push(temperature.value)
+          )
 
-    Highcharts.chart('chart', {
-      title: {
-        text: 'Temperatures chart'
-      }
-      xAxis: {
-        categories: dates,
-      },
-      series: [{
-        name: id,
-        data: values
-      }]
-    });
+          @$log.debug "showing temperatures of #{@sensor.sensorId}"
+
+          Highcharts.chart('chart', {
+            title: {
+              text: 'Temperatures chart'
+            }
+            xAxis: {
+              categories: dates,
+            },
+            series: [{
+              name: sensor.sensorId,
+              data: values
+            }]
+          });
+      )
 
 controllersModule.controller('SensorsCtrl', ['$log', 'SensorsService', SensorsCtrl])
